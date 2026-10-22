@@ -1,0 +1,715 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KID A MNESIA — Radiohead</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono&family=Space+Grotesk:wght@400;500;700&display=swap');
+
+    :root {
+      --bg: #090909;
+      --paper: #e9e5dc;
+      --red: #ef2c25;
+      --muted: #8b8983;
+      --line: rgba(233,229,220,.18);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--paper);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    .mono {
+      font-family: 'DM Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      font-size: .68rem;
+    }
+
+    /* NAVBAR */
+    .nav {
+      height: 78px;
+      padding: 0 5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand { font-weight: 700; letter-spacing: .06em; }
+    .brand span { color: var(--red); }
+    .nav-links { display: flex; gap: 30px; color: #b5b1a8; }
+    .nav-links a:hover { color: var(--red); }
+    .dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 12px var(--red);
+      margin-right: 8px;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: calc(100vh - 78px);
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      padding: 5vw;
+      gap: 4vw;
+      align-items: center;
+    }
+    .eyebrow {
+      color: var(--red);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--red);
+    }
+    h1 {
+      font-size: clamp(4rem, 9.8vw, 9.5rem);
+      line-height: .78;
+      letter-spacing: -.095em;
+    }
+    .outline {
+      color: transparent;
+      -webkit-text-stroke: 1px var(--paper);
+    }
+    .hero-desc {
+      max-width: 410px;
+      color: #aaa69d;
+      line-height: 1.75;
+      margin: 34px 0 28px;
+    }
+    .actions { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn {
+      border: 1px solid var(--paper);
+      padding: 14px 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: .68rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      transition: .25s;
+      display: inline-block;
+    }
+    .btn.primary {
+      background: var(--red);
+      border-color: var(--red);
+      color: white;
+    }
+    .btn:hover {
+      transform: translateY(-3px);
+      background: var(--paper);
+      color: #090909;
+    }
+
+    /* ABSTRACT ALBUM ART */
+    .cover-wrap {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 480px;
+    }
+    .cover {
+      width: min(100%, 520px);
+      aspect-ratio: 1;
+      position: relative;
+      overflow: hidden;
+      background: #a5a8a2;
+      box-shadow: 0 25px 100px #000;
+      transform: rotate(2deg);
+      transition: .7s;
+    }
+    .cover:hover { transform: rotate(0) scale(1.015); }
+    .cover-art {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(145deg,
+        #b6b9b2, #777e79 35%, #3e4747 60%, #111b20);
+    }
+    .shape { position: absolute; mix-blend-mode: multiply; }
+    .shape.one {
+      width: 60%; height: 75%;
+      background: #d7d7cb;
+      clip-path: polygon(0 0,100% 20%,65% 100%,18% 75%);
+      left: -10%; top: 5%;
+      transform: rotate(12deg);
+    }
+    .shape.two {
+      width: 72%; height: 80%;
+      background: #242d32;
+      clip-path: polygon(0 45%,60% 0,100% 60%,50% 100%);
+      right: -15%; bottom: -10%;
+    }
+    .shape.three {
+      width: 42%; height: 52%;
+      background: var(--red);
+      clip-path: polygon(20% 0,100% 35%,45% 100%,0 40%);
+      right: 8%; top: 4%;
+    }
+    .cover-title {
+      position: absolute;
+      left: 7%; bottom: 7%;
+      color: #f0eee5;
+      font-size: clamp(1.4rem,3vw,2.7rem);
+      font-weight: 700;
+      letter-spacing: -.06em;
+      line-height: .9;
+      text-shadow: 0 2px 18px #111;
+    }
+    .cover-title small {
+      display: block;
+      font-size: .58rem;
+      letter-spacing: .2em;
+      margin-top: 12px;
+      font-family: 'DM Mono', monospace;
+    }
+    .sticker {
+      position: absolute;
+      right: -5px; top: 11%;
+      background: var(--red);
+      color: white;
+      width: 95px; height: 95px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      transform: rotate(12deg);
+      font-size: .65rem;
+      line-height: 1.45;
+    }
+
+    /* MOVING TEXT */
+    .ticker {
+      overflow: hidden;
+      border-block: 1px solid var(--line);
+      padding: 16px 0;
+      color: var(--red);
+      white-space: nowrap;
+    }
+    .ticker-inner {
+      display: inline-flex;
+      gap: 32px;
+      animation: marquee 25s linear infinite;
+    }
+    .ticker span {
+      font-family: 'DM Mono', monospace;
+      font-size: .75rem;
+      letter-spacing: .15em;
+    }
+    @keyframes marquee {
+      to { transform: translateX(-50%); }
+    }
+
+    /* ALBUM CARDS */
+    section.content { padding: 110px 5vw; }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 45px;
+    }
+    .section-head h2 {
+      font-size: clamp(2.6rem,6vw,5.6rem);
+      letter-spacing: -.08em;
+      line-height: .9;
+    }
+    .section-head p {
+      color: var(--muted);
+      max-width: 300px;
+      line-height: 1.6;
+    }
+    .albums {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .album-card {
+      border: 1px solid var(--line);
+      padding: 24px;
+      min-height: 310px;
+      position: relative;
+      overflow: hidden;
+      transition: .3s;
+    }
+    .album-card:hover {
+      border-color: var(--red);
+      transform: translateY(-5px);
+    }
+    .album-card.kida {
+      background: linear-gradient(135deg,#313b3a,#101415 75%);
+    }
+    .album-card.amnesiac {
+      background: linear-gradient(135deg,#4b1717,#160d0d 75%);
+    }
+    .album-number { color: var(--red); margin-bottom: 42px; }
+    .album-card h3 {
+      font-size: clamp(2.4rem,5vw,4.8rem);
+      letter-spacing: -.08em;
+    }
+    .album-card p {
+      color: #c1bdb4;
+      margin-top: 15px;
+      max-width: 300px;
+      line-height: 1.6;
+      font-size: .88rem;
+    }
+    .album-year {
+      position: absolute;
+      bottom: 24px; right: 24px;
+      color: #c1bdb4;
+    }
+
+    /* TRACKLIST */
+    .track-section {
+      background: var(--paper);
+      color: #111;
+      padding: 100px 5vw;
+    }
+    .track-section .section-head p { color: #68665f; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 22px; }
+    .tab {
+      border: 1px solid #aaa69d;
+      color: #111;
+      padding: 10px 16px;
+      background: transparent;
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+    }
+    .tab.active, .tab:hover {
+      background: #111;
+      color: #eee;
+    }
+    .track-list { border-top: 1px solid #b9b4aa; }
+    .track {
+      display: grid;
+      grid-template-columns: 48px 1fr auto 36px;
+      align-items: center;
+      gap: 18px;
+      padding: 18px 0;
+      border-bottom: 1px solid #b9b4aa;
+      transition: .2s;
+    }
+    .track:hover { padding-left: 10px; background: #ded9cf; }
+    .track-no, .track-meta {
+      font-family: 'DM Mono', monospace;
+      color: #8d887f;
+      font-size: .75rem;
+    }
+    .track-name { font-size: 1.12rem; font-weight: 600; }
+    .play-track {
+      border: 1px solid #999287;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: transparent;
+      cursor: pointer;
+    }
+    .play-track:hover { background: var(--red); color: white; }
+    .note { font-size: .78rem; color: #716d64; margin-top: 18px; }
+
+    /* ABOUT & FOOTER */
+    .manifesto {
+      padding: 120px 5vw;
+      display: grid;
+      grid-template-columns: .6fr 1.4fr;
+      gap: 5vw;
+      border-bottom: 1px solid var(--line);
+    }
+    .manifesto blockquote {
+      font-size: clamp(2rem,5vw,4.7rem);
+      line-height: 1.05;
+      letter-spacing: -.065em;
+    }
+    .manifesto blockquote span { color: var(--red); }
+    .manifesto .mono, footer { color: var(--muted); }
+    footer {
+      padding: 28px 5vw;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    footer strong { color: var(--paper); }
+
+    /* DEMO PLAYER */
+    .player {
+      position: fixed;
+      bottom: 18px; left: 50%;
+      transform: translateX(-50%);
+      width: min(600px,calc(100% - 28px));
+      z-index: 20;
+      background: rgba(20,20,19,.94);
+      border: 1px solid #ffffff24;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 12px 50px #0008;
+    }
+    .player-art {
+      width: 42px; height: 42px;
+      flex-shrink: 0;
+      background: linear-gradient(135deg,#aab0a7,#ef2c25,#111b20);
+    }
+    .player-info { min-width: 0; flex: 1; }
+    .player-info strong {
+      font-size: .82rem;
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .player-info small {
+      font-family: 'DM Mono', monospace;
+      color: var(--muted);
+      font-size: .6rem;
+    }
+    .player button {
+      border: 0;
+      background: transparent;
+      color: var(--paper);
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .player button:hover { color: var(--red); }
+    .progress {
+      height: 2px;
+      background: #ffffff2b;
+      position: absolute;
+      top: 0; left: 0; right: 0;
+    }
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--red);
+    }
+    .toast {
+      position: fixed;
+      left: 50%; bottom: 100px;
+      transform: translate(-50%,10px);
+      background: var(--paper);
+      color: #111;
+      padding: 12px 18px;
+      font-size: .78rem;
+      z-index: 30;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%,0);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 800px) {
+      .nav { height: 66px; }
+      .nav-links { gap: 14px; }
+      .nav-right { display: none; }
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 50px 6vw;
+        gap: 30px;
+      }
+      .cover-wrap { min-height: unset; }
+      .cover { width: min(76vw,430px); }
+      .albums { grid-template-columns: 1fr; }
+      .section-head {
+        align-items: start;
+        flex-direction: column;
+      }
+      .manifesto {
+        grid-template-columns: 1fr;
+        padding: 80px 6vw;
+      }
+      .track-section, section.content { padding: 80px 6vw; }
+      .track {
+        grid-template-columns: 28px 1fr auto 32px;
+        gap: 10px;
+      }
+      .track-meta { display: none; }
+    }
+    @media (max-width: 440px) {
+      .nav-links { font-size: .62rem; gap: 10px; }
+      h1 { font-size: 18vw; }
+      .cover { width: 82vw; }
+      .track-name { font-size: 1rem; }
+      .player { gap: 9px; padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav">
+    <a class="brand" href="#home">RADIOHEAD<span>®</span></a>
+    <nav class="nav-links mono">
+      <a href="#albums">The albums</a>
+      <a href="#tracks">Tracklist</a>
+      <a href="#about">The feeling</a>
+    </nav>
+    <div class="mono"><span class="dot"></span>An archive of sound</div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div>
+        <div class="eyebrow mono">A sonic landscape / 2000—2021</div>
+        <h1>KID A<br><span class="outline">MNESIA</span></h1>
+        <p class="hero-desc">
+          Dua dunia. Satu ingatan yang terdistorsi. Masuk ke semesta Radiohead—
+          tempat elektronik dingin, melodi yang menghantui, dan emosi manusia bertabrakan.
+        </p>
+        <div class="actions">
+          <a class="btn primary" href="#tracks">↓ Explore tracklist</a>
+          <a class="btn" href="#albums">Discover the albums ↗</a>
+        </div>
+      </div>
+
+      <div class="cover-wrap">
+        <div class="cover">
+          <div class="cover-art">
+            <div class="shape one"></div>
+            <div class="shape two"></div>
+            <div class="shape three"></div>
+          </div>
+          <div class="cover-title">
+            KID A<br>MNESIA
+            <small>RADIOHEAD · 3 DISC COLLECTION</small>
+          </div>
+        </div>
+        <div class="sticker mono">THREE<br>IMAGINARY<br>WORLDS</div>
+      </div>
+    </section>
+
+    <div class="ticker">
+      <div class="ticker-inner">
+        <span>EVERYTHING IN ITS RIGHT PLACE ✳</span>
+        <span>✳ HOW TO DISAPPEAR COMPLETELY</span>
+        <span>✳ PYRAMID SONG</span>
+        <span>✳ YOU AND WHOSE ARMY?</span>
+        <span>EVERYTHING IN ITS RIGHT PLACE ✳</span>
+        <span>✳ HOW TO DISAPPEAR COMPLETELY</span>
+        <span>✳ PYRAMID SONG</span>
+        <span>✳ YOU AND WHOSE ARMY?</span>
+      </div>
+    </div>
+
+    <section class="content" id="albums">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow mono">01 / The collection</div>
+          <h2>Two albums.<br>One universe.</h2>
+        </div>
+        <p>Dari perubahan arah sonik tahun 2000 hingga sisi yang lebih gelap dan bertekstur pada 2001.</p>
+      </div>
+
+      <div class="albums">
+        <article class="album-card kida">
+          <div class="album-number mono">01 — THE FUTURE ARRIVES</div>
+          <h3>KID A</h3>
+          <p>Eksperimen elektronik, suara terfragmentasi, dan kecemasan modern yang terasa seperti mimpi.</p>
+          <div class="album-year mono">2000 / LP</div>
+        </article>
+        <article class="album-card amnesiac">
+          <div class="album-number mono">02 — THE MEMORY REMAINS</div>
+          <h3>AMNESIAC</h3>
+          <p>Jazz ganjil, ritme menghantui, dan lagu-lagu yang terdengar seperti kenangan samar.</p>
+          <div class="album-year mono">2001 / LP</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="track-section" id="tracks">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow mono">02 / Listen closer</div>
+          <h2>The tracklist.</h2>
+        </div>
+        <p>Pilih album untuk menjelajahi daftar lagu. Pemutar di bawah adalah demo visual.</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-album="kida">KID A</button>
+        <button class="tab" data-album="amnesiac">AMNESIAC</button>
+      </div>
+
+      <div class="track-list" id="trackList"></div>
+      <p class="note">Audio belum terhubung. Gunakan file audio milikmu atau layanan streaming resmi.</p>
+    </section>
+
+    <section class="manifesto" id="about">
+      <div class="mono">03 / A note on memory</div>
+      <blockquote>
+        Sometimes the most human thing is to make something that sounds
+        <span>inhuman.</span>
+      </blockquote>
+    </section>
+  </main>
+
+  <footer class="mono">
+    <div><strong>KID A MNESIA</strong> — A fan-made concept experience</div>
+    <div>NOT OFFICIAL · MADE FOR THE LOVE OF MUSIC</div>
+  </footer>
+
+  <div class="player">
+    <div class="progress"><span id="progress"></span></div>
+    <div class="player-art"></div>
+    <div class="player-info">
+      <strong id="nowPlaying">Everything In Its Right Place</strong>
+      <small id="playerAlbum">KID A · DEMO PLAYER</small>
+    </div>
+    <button id="prevBtn" aria-label="Lagu sebelumnya">|◀</button>
+    <button id="playBtn" aria-label="Putar atau jeda">▶</button>
+    <button id="nextBtn" aria-label="Lagu berikutnya">▶|</button>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const albums = {
+      kida: [
+        ["Everything In Its Right Place", "4:11"],
+        ["Kid A", "4:44"],
+        ["The National Anthem", "5:51"],
+        ["How to Disappear Completely", "5:56"],
+        ["Treefingers", "3:42"],
+        ["Optimistic", "5:15"],
+        ["In Limbo", "3:31"],
+        ["Idioteque", "5:09"],
+        ["Morning Bell", "4:35"],
+        ["Motion Picture Soundtrack", "7:01"]
+      ],
+      amnesiac: [
+        ["Packt Like Sardines in a Crushd Tin Box", "4:00"],
+        ["Pyramid Song", "4:49"],
+        ["Pulk/Pull Revolving Doors", "4:07"],
+        ["You and Whose Army?", "3:11"],
+        ["I Might Be Wrong", "4:54"],
+        ["Knives Out", "4:15"],
+        ["Morning Bell/Amnesiac", "3:14"],
+        ["Dollars and Cents", "4:52"],
+        ["Hunting Bears", "2:01"],
+        ["Like Spinning Plates", "3:57"],
+        ["Life in a Glasshouse", "4:34"]
+      ]
+    };
+
+    let currentAlbum = "kida";
+    let currentIndex = 0;
+    let isPlaying = false;
+
+    const list = document.getElementById("trackList");
+    const now = document.getElementById("nowPlaying");
+    const albumLabel = document.getElementById("playerAlbum");
+    const playBtn = document.getElementById("playBtn");
+    const toast = document.getElementById("toast");
+    let toastTimer;
+
+    function notify(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2500);
+    }
+
+    function renderTracks() {
+      list.innerHTML = "";
+
+      albums[currentAlbum].forEach((track, index) => {
+        const row = document.createElement("div");
+        row.className = "track";
+
+        const number = document.createElement("span");
+        number.className = "track-no";
+        number.textContent = String(index + 1).padStart(2, "0");
+
+        const name = document.createElement("span");
+        name.className = "track-name";
+        name.textContent = track[0];
+
+        const duration = document.createElement("span");
+        duration.className = "track-meta";
+        duration.textContent = track[1];
+
+        const button = document.createElement("button");
+        button.className = "play-track";
+        button.textContent = "▶";
+        button.setAttribute("aria-label", "Pilih " + track[0]);
+        button.addEventListener("click", () => selectTrack(index));
+
+        row.append(number, name, duration, button);
+        list.appendChild(row);
+      });
+
+      updatePlayer();
+    }
+
+    function updatePlayer() {
+      const track = albums[currentAlbum][currentIndex];
+      now.textContent = track[0];
+      albumLabel.textContent =
+        (currentAlbum === "kida" ? "KID A" : "AMNESIAC") + " · DEMO PLAYER";
+      playBtn.textContent = isPlaying ? "Ⅱ" : "▶";
+      document.getElementById("progress").style.width =
+        isPlaying ? "24%" : "0%";
+    }
+
+    function selectTrack(index) {
+      currentIndex = index;
+      isPlaying = false;
+      updatePlayer();
+      notify("Track dipilih. Audio belum terhubung.");
+    }
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        currentAlbum = tab.dataset.album;
+        currentIndex = 0;
+        isPlaying = false;
+
+        document.querySelectorAll(".tab").forEach(item => {
+          item.classList.toggle("active", item === tab);
+        });
+
+        renderTracks();
+      });
+    });
+
+    playBtn.addEventListener("click", () => {
+      isPlaying = !isPlaying;
+      updatePlayer();
+      notify(isPlaying
+        ? "Mode demo aktif — audio belum terhubung."
+        : "Demo dijeda.");
+    });
+
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      currentIndex =
+        (currentIndex - 1 + albums[currentAlbum].length) %
+        albums[currentAlbum].length;
+      isPlaying = false;
+      updatePlayer();
+    });
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      currentIndex = (currentIndex + 1) % albums[currentAlbum].length;
+      isPlaying = false;
+      updatePlayer();
+    });
+
+    renderTracks();
+  </script>
+</body>
+</html>
